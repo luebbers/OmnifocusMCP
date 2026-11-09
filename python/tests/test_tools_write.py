@@ -1982,3 +1982,30 @@ async def test_move_project_validation_error_criterion11(server_module: Any) -> 
         await server_module.move_project(project_id_or_name="p6", folder="   ")
 
 
+
+
+PROJECT_ID_OR_NAME_LOOKUP = (
+    "document.flattenedProjects.find(item => item.id.primaryKey === projectName)"
+    " || document.flattenedProjects.byName(projectName)"
+)
+
+
+@pytest.mark.asyncio
+async def test_task_tools_resolve_project_by_id_or_name(
+    mock_server_run_omnijs: Callable[[Any], dict[str, Any]],
+) -> None:
+    """project may be the id returned by create_project, not only an exact name."""
+    configured = mock_server_run_omnijs({"id": "t1", "name": "task"})
+    state = configured["state"]
+    server = configured["server"]
+
+    await server.create_task(name="task", project="aCH77BP1jES")
+    await server.create_tasks_batch([{"name": "task", "project": "aCH77BP1jES"}])
+    await server.move_task(task_id="t1", project="aCH77BP1jES")
+    await server.move_tasks_batch(task_ids=["t1"], project="aCH77BP1jES")
+
+    scripts = [call["script"] for call in state["calls"]]
+    assert len(scripts) == 4
+    for script in scripts:
+        assert PROJECT_ID_OR_NAME_LOOKUP in script
+        assert "const targetProject = document.flattenedProjects.byName(projectName);" not in script

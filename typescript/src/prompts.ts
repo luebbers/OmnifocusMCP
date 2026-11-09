@@ -109,7 +109,7 @@ return projects.map(project => {
       : project.status === Project.Status.OnHold ? "on_hold"
       : project.status === Project.Status.Done ? "completed"
       : "dropped",
-    folderName: project.folder ? project.folder.name : null,
+    folderName: project.parentFolder ? project.parentFolder.name : null,
     taskCount: allTasks.length,
     remainingTaskCount: remainingTaskCount,
     deferDate: project.deferDate ? project.deferDate.toISOString() : null,
@@ -159,7 +159,7 @@ return {
     : project.status === Project.Status.OnHold ? "on_hold"
     : project.status === Project.Status.Done ? "completed"
     : "dropped",
-  folderName: project.folder ? project.folder.name : null,
+  folderName: project.parentFolder ? project.parentFolder.name : null,
   note: project.note,
   dueDate: project.dueDate ? project.dueDate.toISOString() : null,
   deferDate: project.deferDate ? project.deferDate.toISOString() : null,

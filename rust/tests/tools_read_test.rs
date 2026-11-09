@@ -3527,3 +3527,42 @@ async fn added_changed_invalid_date_errors_bubble_up_for_all_new_filter_fields()
         assert_eq!(counts_error.to_string(), message);
     }
 }
+
+// OmniJS exposes a project's containing folder as `parentFolder`; `project.folder`
+// is undefined, which made folderName always null and projectCount always 0.
+#[tokio::test]
+async fn project_folder_scripts_use_parent_folder_property() {
+    let last_script = Arc::new(Mutex::new(String::new()));
+
+    let runner = CapturingRunner {
+        payload: json!([]),
+        last_script: last_script.clone(),
+    };
+    list_folders(&runner, 10)
+        .await
+        .expect("list_folders should succeed");
+    let folders_script = last_script.lock().expect("lock").clone();
+    assert!(folders_script.contains("const folder = project.parentFolder;"));
+
+    search_projects(&runner, "admin", 10)
+        .await
+        .expect("search_projects should succeed");
+    let search_script = last_script.lock().expect("lock").clone();
+    assert!(search_script
+        .contains("folderName: project.parentFolder ? project.parentFolder.name : null"));
+
+    let project_runner = CapturingRunner {
+        payload: json!({"id": "p1", "name": "Project"}),
+        last_script: last_script.clone(),
+    };
+    get_project(&project_runner, "p1")
+        .await
+        .expect("get_project should succeed");
+    let project_script = last_script.lock().expect("lock").clone();
+    assert!(project_script
+        .contains("folderName: project.parentFolder ? project.parentFolder.name : null"));
+
+    for script in [&folders_script, &search_script, &project_script] {
+        assert!(!script.contains("project.folder ") && !script.contains("project.folder;"));
+    }
+}

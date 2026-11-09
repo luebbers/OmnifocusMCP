@@ -729,7 +729,7 @@ impl<R: JxaRunner + Send + Sync + 'static> OmniFocusServer<R> {
     }
 
     #[tool(
-        description = "create one task in inbox or a named project. accepts name plus optional note, dates, flagged, tags, and estimated minutes. returns created task id/name."
+        description = "create one task in inbox or a project (project accepts a project id or exact name). accepts name plus optional note, dates, flagged, tags, and estimated minutes. returns created task id/name."
     )]
     async fn create_task(
         &self,

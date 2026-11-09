@@ -139,7 +139,7 @@ const projects = document.flattenedProjects
       && project.flattenedTasks.some(t => !t.completed)
       && nextTask === null;
     if (folderFilter !== null) {{
-      const folderName = project.folder ? project.folder.name : null;
+      const folderName = project.parentFolder ? project.parentFolder.name : null;
       if (folderName !== folderFilter) return false;
     }}
     if (normalizeProjectStatus(project) !== statusFilter) return false;
@@ -161,7 +161,7 @@ const mappedProjects = projects.map(project => {{
     id: projectId,
     name: project.name,
     status: normalizeProjectStatus(project),
-    folderName: project.folder ? project.folder.name : null,
+    folderName: project.parentFolder ? project.parentFolder.name : null,
     taskCount: counts.taskCount,
     remainingTaskCount: counts.remainingTaskCount,
     deferDate: project.deferDate ? project.deferDate.toISOString() : null,
@@ -258,7 +258,7 @@ return projectsMatching(queryValue)
       id: project.id.primaryKey,
       name: project.name,
       status: normalizeProjectStatus(project),
-      folderName: project.folder ? project.folder.name : null
+      folderName: project.parentFolder ? project.parentFolder.name : null
     }};
   }});"#
     );
@@ -314,7 +314,7 @@ const counts = {{
 
 document.flattenedProjects.forEach(project => {{
   if (folderFilter !== null) {{
-    const folderName = project.folder ? project.folder.name : null;
+    const folderName = project.parentFolder ? project.parentFolder.name : null;
     if (folderName !== folderFilter) return;
   }}
 
@@ -401,7 +401,7 @@ return {{
   id: project.id.primaryKey,
   name: project.name,
   status: normalizeProjectStatus(project),
-  folderName: project.folder ? project.folder.name : null,
+  folderName: project.parentFolder ? project.parentFolder.name : null,
   taskCount: allProjectTasks.length,
   remainingTaskCount: allProjectTasks.filter(task => !task.completed).length,
   completedTaskCount: allProjectTasks.filter(task => task.completed).length,
@@ -961,7 +961,7 @@ return {{
   id: project.id.primaryKey,
   name: project.name,
   status: normalizeProjectStatus(project),
-  folderName: project.folder ? project.folder.name : null,
+  folderName: project.parentFolder ? project.parentFolder.name : null,
   taskCount: allProjectTasks.length,
   remainingTaskCount: allProjectTasks.filter(task => !task.completed).length,
   deferDate: project.deferDate ? project.deferDate.toISOString() : null,

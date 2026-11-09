@@ -15,7 +15,7 @@ pub async fn list_folders<R: JxaRunner>(runner: &R, limit: i32) -> Result<Value>
     let script = format!(
         r#"const folderProjectCounts = new Map();
 document.flattenedProjects.forEach(project => {{
-  const folder = project.folder;
+  const folder = project.parentFolder;
   if (!folder) return;
   const folderId = folder.id.primaryKey;
   const current = folderProjectCounts.get(folderId) || 0;

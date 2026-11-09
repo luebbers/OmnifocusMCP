@@ -2513,3 +2513,79 @@ fn update_task_params_accepts_tags_as_json_encoded_string() {
     let p: UpdateTaskParams = serde_json::from_str(json).expect("string-encoded tags on update");
     assert_eq!(p.tags.expect("tags").into_vec(), vec!["Quick".to_string()]);
 }
+
+// Task tools must resolve `project` by id as well as by name, so that the id
+// returned by create_project can be used directly.
+#[tokio::test]
+async fn task_tools_resolve_project_by_id_or_name() {
+    let scripts = Arc::new(Mutex::new(Vec::new()));
+    let runner = RecordingRunner {
+        payload: json!({"id": "t1", "name": "task"}),
+        scripts: Arc::clone(&scripts),
+        error_message: None,
+    };
+    let lookup = "document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName)";
+
+    create_task(
+        &runner,
+        "task",
+        Some("aCH77BP1jES"),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    )
+    .await
+    .expect("create_task should succeed");
+
+    let batch_runner = RecordingRunner {
+        payload: json!([{"id": "t1", "name": "task"}]),
+        scripts: Arc::clone(&scripts),
+        error_message: None,
+    };
+    create_tasks_batch(
+        &batch_runner,
+        vec![CreateTaskInput {
+            name: "task".to_string(),
+            project: Some("aCH77BP1jES".to_string()),
+            note: None,
+            due_date: None,
+            defer_date: None,
+            flagged: None,
+            tags: None,
+            estimated_minutes: None,
+        }],
+    )
+    .await
+    .expect("create_tasks_batch should succeed");
+
+    move_task(&runner, "t1", Some("aCH77BP1jES"), None)
+        .await
+        .expect("move_task should succeed");
+
+    let move_batch_runner = RecordingRunner {
+        payload: json!({"requested": 1, "moved": 1, "failed": 0, "results": []}),
+        scripts: Arc::clone(&scripts),
+        error_message: None,
+    };
+    let _ = move_tasks_batch(
+        &move_batch_runner,
+        vec!["t1".to_string()],
+        Some("aCH77BP1jES"),
+        None,
+    )
+    .await;
+
+    let captured = scripts.lock().expect("scripts lock should succeed").clone();
+    assert_eq!(captured.len(), 4, "all four task tools should run a script");
+    for script in &captured {
+        assert!(
+            script.contains(lookup),
+            "missing id-or-name lookup in:\n{script}"
+        );
+        assert!(!script
+            .contains("const targetProject = document.flattenedProjects.byName(projectName);"));
+    }
+}

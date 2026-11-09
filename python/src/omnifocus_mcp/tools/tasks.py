@@ -1626,7 +1626,7 @@ async def create_task(
     tags: list[str] | None = None,
     estimatedMinutes: int | None = None,
 ) -> str:
-    """create a new task in inbox or a named project.
+    """create a new task in inbox or a project (by id or exact name).
 
     accepts required name and optional project, note, dates, flagged state,
     tags, and estimated minutes. returns the created task id and name.
@@ -1659,7 +1659,7 @@ const estimatedMinutesValue = {estimated_minutes_value};
 
 const parent = (() => {{
   if (projectName === null || projectName === "") return inbox.ending;
-  const targetProject = document.flattenedProjects.byName(projectName);
+  const targetProject = document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName);
   if (!targetProject) {{
     throw new Error(`Project not found: ${{projectName}}`);
   }}
@@ -1834,7 +1834,7 @@ const taskInputs = {tasks_value};
 
 const resolveParent = (projectName) => {{
   if (projectName === null || projectName === "") return inbox.ending;
-  const targetProject = document.flattenedProjects.byName(projectName);
+  const targetProject = document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName);
   if (!targetProject) {{
     throw new Error(`Project not found: ${{projectName}}`);
   }}
@@ -2252,7 +2252,7 @@ const destinationInfo = (() => {{
   if (projectName === null || projectName === "") {{
     return {{ mode: "inbox", location: inbox.ending }};
   }}
-  const targetProject = document.flattenedProjects.byName(projectName);
+  const targetProject = document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName);
   if (!targetProject) {{
     throw new Error(`Project not found: ${{projectName}}`);
   }}
@@ -2374,7 +2374,7 @@ const destinationInfo = (() => {{
   if (projectName === null || projectName === "") {{
     return {{ mode: "inbox", location: inbox.ending, summary: {{ mode: "inbox" }} }};
   }}
-  const targetProject = document.flattenedProjects.byName(projectName);
+  const targetProject = document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName);
   if (!targetProject) {{
     throw new Error(`Project not found: ${{projectName}}`);
   }}

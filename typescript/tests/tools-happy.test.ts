@@ -306,7 +306,7 @@ describe("tool happy paths", () => {
     expect(script).toContain('const queryValue = "admin";');
     expect(script).toContain("return projectsMatching(queryValue)");
     expect(script).toContain(".slice(0, 7)");
-    expect(script).toContain("folderName: project.folder ? project.folder.name : null");
+    expect(script).toContain("folderName: project.parentFolder ? project.parentFolder.name : null");
   });
 
   test("search_projects returns error for empty query", async () => {

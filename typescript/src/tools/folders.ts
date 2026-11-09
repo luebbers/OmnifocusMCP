@@ -13,7 +13,7 @@ export function register(server: Server): void {
         const script = `
 const folderProjectCounts = new Map();
 document.flattenedProjects.forEach(project => {
-  const folder = project.folder;
+  const folder = project.parentFolder;
   if (!folder) return;
   const folderId = folder.id.primaryKey;
   const current = folderProjectCounts.get(folderId) || 0;

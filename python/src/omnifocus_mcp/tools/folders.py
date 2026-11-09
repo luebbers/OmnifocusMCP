@@ -17,7 +17,7 @@ async def list_folders(limit: int = 100) -> str:
     script = f"""
 const folderProjectCounts = new Map();
 document.flattenedProjects.forEach(project => {{
-  const folder = project.folder;
+  const folder = project.parentFolder;
   if (!folder) return;
   const folderId = folder.id.primaryKey;
   const current = folderProjectCounts.get(folderId) || 0;

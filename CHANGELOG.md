@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- project folder is now read from `project.parentFolder`. OmniJS has no `project.folder` property, so `folderName` was always `null` in `list_projects`, `search_projects`, `get_project` and `update_project` results, the `folder` filter of `list_projects` / `get_project_counts` never matched, and `list_folders` reported `projectCount: 0` for every folder. Applies to Python, TypeScript, and Rust, including the TypeScript prompts and `omnifocus://projects` resource. This also explains the "move_project has no effect" symptom in issue #11: the move was applied, but the result could not be read back.
+- `create_task`, `create_tasks_batch`, `move_task` and `move_tasks_batch` now resolve `project` by project id as well as by exact name. Previously only `flattenedProjects.byName` was used, so passing the id returned by `create_project` failed with `Project not found: <id>`.
+
 ## [1.1.9] - 2026-04-05
 
 ### Fixed

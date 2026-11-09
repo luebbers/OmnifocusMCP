@@ -2261,7 +2261,7 @@ const estimatedMinutesValue = {estimated_minutes_value};
 
 const parent = (() => {{
   if (projectName === null || projectName === "") return inbox.ending;
-  const targetProject = document.flattenedProjects.byName(projectName);
+  const targetProject = document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName);
   if (!targetProject) {{
     throw new Error(`Project not found: ${{projectName}}`);
   }}
@@ -2516,7 +2516,7 @@ pub async fn create_tasks_batch<R: JxaRunner>(
 
 const resolveParent = (projectName) => {{
   if (projectName === null || projectName === "") return inbox.ending;
-  const targetProject = document.flattenedProjects.byName(projectName);
+  const targetProject = document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName);
   if (!targetProject) {{
     throw new Error(`Project not found: ${{projectName}}`);
   }}
@@ -2907,7 +2907,7 @@ const destinationInfo = (() => {{
   if (projectName === null || projectName === "") {{
     return {{ mode: "inbox", location: inbox.ending }};
   }}
-  const targetProject = document.flattenedProjects.byName(projectName);
+  const targetProject = document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName);
   if (!targetProject) {{
     throw new Error(`Project not found: ${{projectName}}`);
   }}
@@ -3037,7 +3037,7 @@ const destinationInfo = (() => {{
   if (projectName === null || projectName === "") {{
     return {{ mode: "inbox", location: inbox.ending, summary: {{ mode: "inbox" }} }};
   }}
-  const targetProject = document.flattenedProjects.byName(projectName);
+  const targetProject = document.flattenedProjects.find(item => item.id.primaryKey === projectName) || document.flattenedProjects.byName(projectName);
   if (!targetProject) {{
     throw new Error(`Project not found: ${{projectName}}`);
   }}

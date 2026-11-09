@@ -1541,7 +1541,7 @@ async def test_search_projects_happy_path_criterion21(
     assert 'const queryValue = "admin";' in script
     assert "return projectsMatching(queryValue)" in script
     assert ".slice(0, 7)" in script
-    assert "folderName: project.folder ? project.folder.name : null" in script
+    assert "folderName: project.parentFolder ? project.parentFolder.name : null" in script
 
 
 @pytest.mark.asyncio
@@ -1742,6 +1742,8 @@ async def test_list_folders_happy_path(
     assert json.loads(result) == payload
     assert len(state["calls"]) == 1
     assert "document.flattenedFolders.slice(0, 2)" in state["calls"][0]["script"]
+    # OmniJS exposes the containing folder as project.parentFolder; project.folder is undefined.
+    assert "const folder = project.parentFolder;" in state["calls"][0]["script"]
 
 
 @pytest.mark.asyncio

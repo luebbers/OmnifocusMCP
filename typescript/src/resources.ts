@@ -108,7 +108,7 @@ return projects.map(project => {
     id: projectId,
     name: project.name,
     status: normalizeProjectStatus(project),
-    folderName: project.folder ? project.folder.name : null,
+    folderName: project.parentFolder ? project.parentFolder.name : null,
     taskCount: counts.taskCount,
     remainingTaskCount: counts.remainingTaskCount,
     deferDate: project.deferDate ? project.deferDate.toISOString() : null,
